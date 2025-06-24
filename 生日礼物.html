@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>爸爸生日快乐！</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%2210 0 100 100%22><text y=%22.90em%22 font-size=%2290%22>🎁</text></svg>"></link>
+  <style>
+    body {
+      margin: 0;
+      background: #fff8f0;
+      font-family: 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+    }
+    h1 {
+      text-align: center;
+      padding: 30px 0 0;
+      color: #ff7043;
+    }
+    .timeline-container {
+      position: relative;
+      width: 100vw;
+      height: 4050px;
+    }
+    .bubble {
+      position: absolute;
+      width: 220px;
+      height: 160px;
+      background-color: #ffeaa7;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 150px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      animation: float 5s ease-in-out infinite;
+      transition: transform 0.3s ease;
+    }
+    .bubble:hover {
+      transform: scale(1.1);
+    }
+    .message-box {
+      position: absolute;
+      max-width: 480px;
+      background: #e3f2fd;
+      border: 2px solid #90caf9;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 16px;
+      display: none;
+      z-index: 10;
+    }
+    .footer {
+      position: fixed;
+      bottom: 10px;
+      right: 20px;
+      background-color: #ffeaa7;
+      padding: 8px 14px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      font-size: 14px;
+      color: #555;
+      z-index: 100;
+      font-weight: 500;
+    }
+    .message-box img {
+      width: 100%;
+      max-height: 600px;
+      border-radius: 10px;
+      margin-top: 12px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      object-fit: contain;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    audio { display: none; }
+  </style>
+</head>
+<div class="footer">2025.6.24，made by 李方沁</div>
+<body>
+  <h1>请点击下面的泡泡！</h1>
+  <div class="timeline-container" id="timeline">
+    <svg id="connector" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+
+  <audio id="bg-music" autoplay loop>
+    <source src="birthday_song.m4a" type="audio/mp4">
+    Your browser does not support audio.
+  </audio>
+
+  <script>
+    const memories = [
+      { text: "1973.6.24", x: 200, y: 100, message: "爸爸出生了！" },
+      { text: "小时候", x: 600, y: 500, message: "爸爸从小就爱画画，做些手工制品。随家人搬到了临湘，刚到时还不会说当地的方言" },
+      { text: "大学时光", x: 250, y: 900, message: "经常跟我们讲当时跟着人家运动了一年，身体明显变好很多，所以一直把锻炼看得很重要" },
+      { text: "与妈妈的故事❤", x: 550, y: 1300, image: "photos/2.jpg", message: "经人介绍认识了妈妈，追求后交往大约两年后结婚" },
+      { text: "2001.8.29", x: 280, y: 1700, message: "世界上多了一个叫李方沁的人" },
+      { text: "我的童年", x: 620, y: 2100, image: "photos/46.jpg", message: "一岁时，为了让我上这个好学校，爸爸放弃了当时比较高薪的职位，举家搬来外校工作，直至今天一直在广外生活，这已成为父母人生中的二分之一，也是我人生中的前70%。小时候爸爸总是找来很多好玩的" },
+      { text: "一个小秘密", x: 180, y: 2500, message: "那时学校经常组织旅游。有一次出去旅游时，我抓着一个叔叔说给我看看票嘛！然后爸爸把我喊过去了叫我看他的。其实我当时是认错爸爸了！我以为那个叔叔是我爸爸哈哈哈哈哈 矮矮的我没有抬头确认好爸爸。这件事我没跟任何人说过，算是我童年的一件小小的糗事" },
+      { text: "全家福", x: 560, y: 2900, image: "photos/XN9A2911.jpg", message: "全家福" },
+      { text: "2015.2.3", x: 300, y: 3300, image: "photos/sistersborn.jpg", message: "妹妹出生，至此小家庭达到完整形态" },
+      { text: "最近", x: 520, y: 3700, image: "photos/TheLast.jpg", message: "最近的一次全家福，摄于去年暑假。" }
+    ];
+
+    const timeline = document.getElementById('timeline');
+    const svg = document.getElementById('connector');
+
+    function createPath(points) {
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      let d = `M ${points[0].x} ${points[0].y}`;
+      for (let i = 1; i < points.length - 1; i++) {
+        const xc = (points[i].x + points[i + 1].x) / 2;
+        const yc = (points[i].y + points[i + 1].y) / 2;
+        d += ` Q ${points[i].x},${points[i].y} ${xc},${yc}`;
+      }
+      d += ` T ${points[points.length - 1].x},${points[points.length - 1].y}`;
+      path.setAttribute("d", d);
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", "#bbb");
+      path.setAttribute("stroke-width", "3");
+      path.setAttribute("stroke-linecap", "round");
+      svg.appendChild(path);
+    }
+
+    const positions = [];
+
+    memories.forEach(mem => {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.style.left = `${mem.x}px`;
+      bubble.style.top = `${mem.y}px`;
+      bubble.innerText = mem.text;
+
+      const msg = document.createElement('div');
+      msg.className = 'message-box';
+      msg.style.left = `${mem.x + 130}px`;
+      msg.style.top = `${mem.y}px`;
+      msg.innerHTML = `<div>${mem.message}</div>`;
+      if (mem.image) {
+        msg.innerHTML += `<img src="${mem.image}" alt="memory photo">`;
+      }
+
+      bubble.addEventListener('click', () => {
+        document.querySelectorAll('.message-box').forEach(m => m.style.display = 'none');
+        msg.style.display = 'block';
+      });
+
+      positions.push({
+        x: mem.x + 50 + (Math.random() * 40 - 20),
+        y: mem.y + 50 + (Math.random() * 10 - 5)
+      });
+
+      timeline.appendChild(bubble);
+      timeline.appendChild(msg);
+    });
+
+    createPath(positions);
+
+    window.addEventListener('click', () => {
+      const audio = document.getElementById('bg-music');
+      if (audio.paused) audio.play();
+    });
+  </script>
+</body>
+</html>
